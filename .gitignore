@@ -37,4 +37,5 @@ out/
 .vscode/
 
 .env
-assets/telegram_icon.jpeg
+assets/telegram_icon.jpeg.DS_Store
+.DS_Store
