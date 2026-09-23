@@ -1,6 +1,6 @@
 package com.science_kit.science_kit_bot.bot.events;
 
-import com.science_kit.science_kit_bot.bot.service.MessageTrackerService;
+import com.science_kit.science_kit_bot.common.service.MessageTrackerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

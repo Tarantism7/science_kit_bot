@@ -1,7 +1,9 @@
 package com.science_kit.science_kit_bot.bot.commands;
 
 import com.science_kit.science_kit_bot.bot.events.MessageEvent;
-import com.science_kit.science_kit_bot.bot.utils.UnitConverter;
+import com.science_kit.science_kit_bot.common.commands.Command;
+import com.science_kit.science_kit_bot.common.commands.CommandName;
+import com.science_kit.science_kit_bot.converter.UnitConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;

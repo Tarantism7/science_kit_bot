@@ -1,8 +1,10 @@
 package com.science_kit.science_kit_bot.bot.commands;
 
 import com.science_kit.science_kit_bot.bot.events.MessageEvent;
-import com.science_kit.science_kit_bot.bot.service.KeyboardService;
-import com.science_kit.science_kit_bot.bot.service.LocalizationService;
+import com.science_kit.science_kit_bot.common.service.KeyboardService;
+import com.science_kit.science_kit_bot.common.commands.Command;
+import com.science_kit.science_kit_bot.common.commands.CommandName;
+import com.science_kit.science_kit_bot.common.service.LocalizationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;

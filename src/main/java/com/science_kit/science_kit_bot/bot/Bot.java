@@ -1,6 +1,6 @@
 package com.science_kit.science_kit_bot.bot;
 
-import com.science_kit.science_kit_bot.bot.commands.CommandHandler;
+import com.science_kit.science_kit_bot.common.commands.CommandHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
