@@ -4,8 +4,8 @@
 
 # Science Kit Telegram Bot
 
-A Java Spring Boot Telegram bot providing a comprehensive collection of scientific formulas for students.
-<br/> It's a free project. Donations are appreciated and will be used for improvements and VPS rent for the bot.
+A Java Spring Boot Telegram bot designed to provide students with a comprehensive collection of scientific resources, including formulas, useful information, calculations, and other educational tools.
+<br/>This is a free and open-source project. Donations are appreciated and help support ongoing development, improvements, and VPS hosting costs.
 
 ![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)
 ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white) 
@@ -29,3 +29,6 @@ A Java Spring Boot Telegram bot providing a comprehensive collection of scientif
 | `/element (num or name)` | `/element 2` <br/><br/> `/element he` | Receive info about element: <br/>`Atomic number`<br/>`Atomic mass`<br/>`Group`<br/>`Perid`<br/>`Category`<br/>`Electronegativity`<br/>`Melting point in Kelvin`<br/>`Electron configuration`|
 
 ### Contributions and Help are appreciated
+
+## Author
+- [@Tarantism](https://www.github.com/tarantism7)
