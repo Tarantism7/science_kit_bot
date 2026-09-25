@@ -32,7 +32,7 @@ public class AboutCommand implements Command {
         String aboutText = "🤖 *Science Kit Bot" +
                 "*\n\n" +
                 "An interactive multi-purpose utility bot designed to help you perform accurate physical unit conversions, track metrics, and solve technical queries seamlessly\\.\n\n" +
-                "• *Version:* `1.0.0`\n" +
+                "• *Version:* `0.1.0`\n" +
                 "• *Framework:* Spring Boot\n" +
                 "• *Features:* Interactive wizards, multi-unit support, and custom keyboards\\.";
 
