@@ -1,7 +1,22 @@
 databaseChangeLog:
   - include:
-      file: db/changelog/001-users.sql
+      file: 001-users.sql
+      relativeToChangelogFile: true
   - include:
-      file: db/changelog/002-elements.sql
+      file: 002-elements.sql
+      relativeToChangelogFile: true
   - include:
-      file: db/changelog/003-physics-formulas.sql
+      file: 003-physics-formulas.sql
+      relativeToChangelogFile: true
+  - include:
+      file: chem01-chemistry-formulas.sql
+      relativeToChangelogFile: true
+  - include:
+      file: chem02-chemical-compounds.sql
+      relativeToChangelogFile: true
+  - include:
+      file: chem03-add-chemistry-formulas.sql
+      relativeToChangelogFile: true
+  - include:
+      file: chem04-add-chemical-compounds.sql
+      relativeToChangelogFile: true

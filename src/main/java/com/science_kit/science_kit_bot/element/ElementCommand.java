@@ -2,12 +2,10 @@ package com.science_kit.science_kit_bot.element;
 
 import com.science_kit.science_kit_bot.common.commands.Command;
 import com.science_kit.science_kit_bot.common.commands.CommandName;
-import com.science_kit.science_kit_bot.bot.events.MessageEvent;
+import com.science_kit.science_kit_bot.common.service.TelegramMessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Service
@@ -15,7 +13,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @Slf4j
 public class ElementCommand implements Command {
 
-    private final ApplicationEventPublisher eventPublisher;
+    private final TelegramMessageService telegramMessageService;
     private final ElementService elementService;
 
     @Override
@@ -37,25 +35,18 @@ public class ElementCommand implements Command {
 
         log.info("User requested element '{}'", argument);
 
-        SendMessage message;
-
         if (argument == null || argument.isBlank()) {
             log.warn("Invalid /element request: missing argument");
 
-            message = SendMessage.builder()
-                    .chatId(chatId)
-                    .text("Please enter a valid element, e.g. /element 3")
-                    .build();
-        } else {
-            message = elementService.find(argument)
-                    .map(element -> SendMessage.builder()
-                            .chatId(chatId)
-                            .text(formatElement(element))
-                            .build())
-                    .orElseGet(() -> null);
+            telegramMessageService.send(chatId, "Please enter a valid element, e.g. /element 3");
+            return;
         }
 
-        eventPublisher.publishEvent(new MessageEvent(this, message));
+        elementService.find(argument).ifPresentOrElse(
+                        element -> telegramMessageService.send(
+                                chatId,
+                                formatElement(element)), () -> telegramMessageService.send(chatId,
+                                "Element not found: " + argument));
     }
 
     private String extractArgument(String text) {
