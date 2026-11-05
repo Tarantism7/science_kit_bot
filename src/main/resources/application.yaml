@@ -25,3 +25,8 @@ spring:
 
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yaml
+
+logging:
+  level:
+    root: INFO
+    com.science_kit.science_kit_bot: DEBUG

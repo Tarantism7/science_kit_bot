@@ -4,6 +4,7 @@ import com.science_kit.science_kit_bot.common.commands.Command;
 import com.science_kit.science_kit_bot.common.commands.CommandName;
 import com.science_kit.science_kit_bot.bot.events.MessageEvent;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -11,6 +12,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ElementCommand implements Command {
 
     private final ApplicationEventPublisher eventPublisher;
@@ -33,9 +35,13 @@ public class ElementCommand implements Command {
         String text = update.getMessage().getText();
         String argument = extractArgument(text);
 
+        log.info("User requested element '{}'", argument);
+
         SendMessage message;
 
         if (argument == null || argument.isBlank()) {
+            log.warn("Invalid /element request: missing argument");
+
             message = SendMessage.builder()
                     .chatId(chatId)
                     .text("Please enter a valid element, e.g. /element 3")

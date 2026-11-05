@@ -1,11 +1,16 @@
 package com.science_kit.science_kit_bot.converter;
 
+import com.science_kit.science_kit_bot.exception.UnitConversionException;
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.*;
 
 /**
  * Central conversion utility defining physical units, their relationships,
  * alias parsing, category matching, and conversion math.
  */
+
+@Slf4j
 public class UnitConverter {
 
     // Private constructor prevents instantiation of this utility class.
@@ -14,11 +19,14 @@ public class UnitConverter {
     }
 
     public static double convert(double value, Unit from, Unit to) {
+
+        log.debug("Converting {} {} to {}",value, from, to);
+
+        if (from == null || to == null) {
+            throw new UnitConversionException(from, to);
+        }
         if (from.getType() != to.getType()) {
-            throw new IllegalArgumentException(
-                    String.format("Cannot convert between mismatched unit types: %s (%s) -> %s (%s)",
-                            from.name(), from.getType(), to.name(), to.getType())
-            );
+            throw new UnitConversionException(from, to);
         }
 
         if (from == to) {

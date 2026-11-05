@@ -12,7 +12,6 @@ public class ElementService {
 
     public Optional<Element> find(String query){
         query = query.trim();
-
         try{
             int atomicNumber = Integer.parseInt(query);
             if(atomicNumber < 1 || atomicNumber > 118){

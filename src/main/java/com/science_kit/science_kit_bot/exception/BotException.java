@@ -1,0 +1,8 @@
+package com.science_kit.science_kit_bot.exception;
+
+public class BotException extends RuntimeException {
+    public BotException(String message) {
+        super(message);
+    }
+    public BotException(String message, Throwable cause) {super(message,cause);}
+}
