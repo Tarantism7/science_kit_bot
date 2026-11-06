@@ -179,7 +179,6 @@ async fn main() {
 
     // Start the Axum HTTP server.
     //
-    //
     // The server listens for incoming connections using
     // the TCP listener and processes requests through
     // the configured application router.
