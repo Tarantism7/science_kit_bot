@@ -39,3 +39,5 @@ out/
 .env
 assets/telegram_icon.jpeg
 .DS_Store
+/VPS
+/.github/workflows/old

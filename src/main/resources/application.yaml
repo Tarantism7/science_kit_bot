@@ -30,3 +30,7 @@ logging:
   level:
     root: INFO
     com.science_kit.science_kit_bot: DEBUG
+
+rust:
+  service:
+    url: ${RUST_SERVICE_URL:http://localhost:8082}
