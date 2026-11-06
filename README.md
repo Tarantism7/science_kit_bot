@@ -4,6 +4,8 @@
 
 # Science Kit Telegram Bot
 
+### Find on Telegram: [@ScienceKitBot](https://t.me/ScienceKitBot)
+
 A Java Spring Boot Telegram bot designed to provide students with a comprehensive collection of scientific resources, including formulas, useful information, calculations, and other educational tools.
 <br/>This is a free and open-source project. Donations are appreciated and help support ongoing development, improvements, and VPS hosting costs.
 
