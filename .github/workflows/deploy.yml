@@ -29,7 +29,7 @@ jobs:
               - 'gradle/**'
               - 'gradlew'
             rust:
-              - 'rust/**'
+              - 'rust-engine/**'
 
   deploy:
     needs: changes
@@ -65,7 +65,7 @@ jobs:
       - name: Build Rust Microservice
         if: ${{ needs.changes.outputs.rust == 'true' }}
         run: |
-          cd rust
+          cd rust-engine
           cargo build --release
 
       - name: Setup SSH
@@ -84,8 +84,8 @@ jobs:
       - name: Upload Rust Binary
         if: ${{ needs.changes.outputs.rust == 'true' }}
         run: |
-          chmod +x rust/target/release/science_kit_rust
-          scp rust/target/release/science_kit_rust \
+          chmod +x rust-engine/target/release/science_kit_rust
+          scp rust-engine/target/release/science_kit_rust \
             "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/opt/sciencekit/science_kit_rust"
 
       - name: Restart Services Conditionally
