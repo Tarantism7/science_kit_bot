@@ -51,7 +51,8 @@ async fn main() {
     let port = std::env::var("PORT")
         .unwrap_or_else(|_| "8082".to_string());
     
-    let addr = format!("127.0.0.1:{}", port);
+     let addr = format!("127.0.0.1:{}", port);
+    // let addr = format!("0.0.0.1:{}", port); use for docker
 
     let listener = tokio::net::TcpListener::bind(&addr)
         .await

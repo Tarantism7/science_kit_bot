@@ -1,13 +1,13 @@
 package com.science_kit.science_kit_bot.chemistry.calculator;
 
-import com.science_kit.science_kit_bot.common.commands.Command;
+import com.science_kit.science_kit_bot.common.commands.AbstractCommand;
 import com.science_kit.science_kit_bot.common.commands.CommandName;
 import com.science_kit.science_kit_bot.common.service.TelegramMessageService;
+import com.science_kit.science_kit_bot.common.utils.CommandUtils;
 import com.science_kit.science_kit_bot.element.Element;
 import com.science_kit.science_kit_bot.element.ElementService;
 import com.science_kit.science_kit_bot.rust.RustChemistryClient;
 import com.science_kit.science_kit_bot.rust.RustClientDto;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -16,8 +16,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
-public class MolarMassCommand implements Command {
+public class MolarMassCommand extends AbstractCommand {
 
     private final ChemicalFormulaParser parser;
     private final ElementService elementService;
@@ -25,22 +24,30 @@ public class MolarMassCommand implements Command {
     private final MolarMassCalculator localCalculator;
     private final TelegramMessageService telegramMessageService;
 
-    @Override
-    public boolean canHandle(Update update) {
-        return update.hasMessage()
-                && update.getMessage().hasText()
-                && update.getMessage().getText()
-                .trim().matches("^/molar(@\\w+)?(\\s+.*)?$");
+    public MolarMassCommand(
+            ChemicalFormulaParser parser,
+            ElementService elementService,
+            RustChemistryClient rustChemistryClient,
+            MolarMassCalculator localCalculator,
+            TelegramMessageService telegramMessageService
+    ) {
+        super(CommandName.MOLAR_MASS);
+        this.parser = parser;
+        this.elementService = elementService;
+        this.rustChemistryClient = rustChemistryClient;
+        this.localCalculator = localCalculator;
+        this.telegramMessageService = telegramMessageService;
     }
 
     @Override
     public void handle(Update update) {
         Long chatId = update.getMessage().getChatId();
 
-        String[] parts = update.getMessage().getText()
-                .trim().split("\\s+", 2);
+        String formula = CommandUtils.extractArgument(
+                update.getMessage().getText()
+        );
 
-        if (parts.length < 2 || parts[1].isBlank()) {
+        if (formula == null) {
             telegramMessageService.send(
                     chatId,
                     "Usage: `/molar H2O`",
@@ -48,8 +55,6 @@ public class MolarMassCommand implements Command {
             );
             return;
         }
-
-        String formula = parts[1].trim();
 
         try {
             // 1. Parse formula into symbol counts
@@ -67,7 +72,10 @@ public class MolarMassCommand implements Command {
 
             // 3. Calculate using Rust microservice
             RustClientDto.MolarMassResponse result =
-                    rustChemistryClient.calculateMolarMass(formula, atomicMasses);
+                    rustChemistryClient.calculateMolarMass(
+                            formula,
+                            atomicMasses
+                    );
 
             // 4. Format breakdown
             StringBuilder breakdownText = new StringBuilder();
@@ -124,10 +132,5 @@ public class MolarMassCommand implements Command {
                 );
             }
         }
-    }
-
-    @Override
-    public String getCommand() {
-        return CommandName.MOLAR_MASS.getCommandName();
     }
 }

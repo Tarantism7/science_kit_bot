@@ -6,8 +6,11 @@ on:
       - main
     paths-ignore:
       - 'README.md'
-      - 'TODO.md'
       - 'docs/**'
+      - 'rust-engine/Dockerfile'
+      - 'Dockerfile'
+      - '.dockerignore'
+      - 'docker-compose.yaml'
 
 jobs:
   changes:

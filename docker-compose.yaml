@@ -1,15 +1,48 @@
 services:
+  java:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      BOT_NAME: ${BOT_NAME:?Set BOT_NAME in .env}
+      BOT_TOKEN: ${BOT_TOKEN:?Set BOT_TOKEN in .env}
+      DB_URL: jdbc:postgresql://postgres:5432/sciencekit_db
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
+      RUST_SERVICE_URL: http://rust:8082
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rust:
+        condition: service_started
+    restart: unless-stopped
+
+  rust:
+    build:
+      context: ./rust-engine
+      dockerfile: Dockerfile
+    environment:
+      PORT: "8082"
+    ports:
+      - "8082:8082"
+    restart: unless-stopped
+
   postgres:
     image: postgres:16
-    container_name: science_kit_bot
     environment:
-      POSTGRES_DB: sciencekit_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD in .env}
     ports:
       - "5437:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
 
 volumes:
   pgdata:

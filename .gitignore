@@ -42,3 +42,4 @@ assets/telegram_icon.jpeg
 /VPS
 /.github/workflows/old
 /rust-engine/target
+docker_commands.txt

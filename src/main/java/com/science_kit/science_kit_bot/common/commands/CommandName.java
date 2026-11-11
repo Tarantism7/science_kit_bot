@@ -4,19 +4,23 @@ import lombok.Getter;
 
 @Getter
 public enum CommandName {
-    ABOUT("ABOUT_COMMAND"),
-    LANGUAGE("LANGUAGE_COMMAND"),
-    START("START_COMMAND"),
-    CONVERT("CONVERT_COMMAND"),
-    ELEMENT("ELEMENT_COMMAND"),
-    INTERACTIVE_CONVERTER("INTERACTIVE_CONVERTER_COMMAND"),
-    CHEM_FORMULA("CHEMICAL_FORMULA_COMMAND"),
-    CHEM_COMPOUND("CHEMICAL_COMPOUND_COMMAND"),
-    MOLAR_MASS("MOLAR_MASS_COMMAND");
+    ABOUT("ABOUT_COMMAND","/about"),
+    LANGUAGE("LANGUAGE_COMMAND","/language"),
+    START("START_COMMAND","/start"),
+    CONVERT("CONVERT_COMMAND","/convert"),
+    ELEMENT("ELEMENT_COMMAND","/elem"),
+    INTERACTIVE_CONVERTER("INTERACTIVE_CONVERTER_COMMAND","/interactive_converter"),
+    CHEM_FORMULA("CHEMICAL_FORMULA_COMMAND","/cf"),
+    CHEM_COMPOUND("CHEMICAL_COMPOUND_COMMAND","/cc"),
+    MOLAR_MASS("MOLAR_MASS_COMMAND","/molar"),
+    MOLARITY("MOLARITY_COMMAND","/molarity"),
+    PH("PH_COMMAND","/ph"),;
 
-    private final String commandName;
+    private final String beanName;
+    private final String command;
 
-    CommandName(String commandName) {
-        this.commandName = commandName;
+    CommandName(String beanName, String command) {
+        this.beanName = beanName;
+        this.command = command;
     }
 }

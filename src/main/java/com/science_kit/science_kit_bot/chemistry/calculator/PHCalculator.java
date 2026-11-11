@@ -1,5 +1,6 @@
 package com.science_kit.science_kit_bot.chemistry.calculator;
 
+import com.science_kit.science_kit_bot.exception.PHCalculationException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -11,10 +12,11 @@ public class PHCalculator {
     public double calculate(double hydrogenConcentration) {
 
         if (!Double.isFinite(hydrogenConcentration)
-                || hydrogenConcentration <= 0
+                || hydrogenConcentration < MIN_CONCENTRATION
                 || hydrogenConcentration > MAX_CONCENTRATION) {
-            throw new IllegalArgumentException(
-                    "Concentration must be greater than 0 and at most 1 mol/L."
+
+            throw new PHCalculationException(
+                    "Concentration must be between 1e-14 and 1.0 mol/L."
             );
         }
 

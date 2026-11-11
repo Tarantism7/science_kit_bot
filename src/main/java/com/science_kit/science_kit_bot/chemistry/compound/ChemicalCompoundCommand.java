@@ -1,49 +1,59 @@
-
 package com.science_kit.science_kit_bot.chemistry.compound;
 
-import com.science_kit.science_kit_bot.common.commands.Command;
+import com.science_kit.science_kit_bot.common.commands.AbstractCommand;
 import com.science_kit.science_kit_bot.common.commands.CommandName;
 import com.science_kit.science_kit_bot.common.service.TelegramMessageService;
-import lombok.RequiredArgsConstructor;
+import com.science_kit.science_kit_bot.common.utils.CommandUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Service
-@RequiredArgsConstructor
-public class ChemicalCompoundCommand implements Command {
+@Slf4j
+public class ChemicalCompoundCommand extends AbstractCommand {
 
     private final ChemicalCompoundService chemicalCompoundService;
     private final TelegramMessageService telegramMessageService;
 
-    @Override
-    public boolean canHandle(Update update) {
-        return update.hasMessage()
-                && update.getMessage().hasText()
-                && update.getMessage().getText().startsWith("/cc");
+    public ChemicalCompoundCommand(
+            ChemicalCompoundService chemicalCompoundService,
+            TelegramMessageService telegramMessageService
+    ) {
+        super(CommandName.CHEM_COMPOUND);
+        this.chemicalCompoundService = chemicalCompoundService;
+        this.telegramMessageService = telegramMessageService;
     }
 
     @Override
     public void handle(Update update) {
+        if (!update.hasMessage() || !update.getMessage().hasText()) {
+            return;
+        }
+
         Long chatId = update.getMessage().getChatId();
 
-        String[] parts = update.getMessage().getText()
-                .trim()
-                .split("\\s+", 2);
+        String formula = CommandUtils.extractArgument(
+                update.getMessage().getText()
+        );
 
-        if (parts.length != 2 || parts[1].isBlank()) {
+        if (formula == null) {
+            log.warn("Invalid /cc request: missing compound formula");
+
             telegramMessageService.send(
                     chatId,
-                    "Chemical compound\nUsage: /chem_compound H2O"
+                    "Chemical compound\nUsage: /cc H2O"
             );
             return;
         }
 
-        var compound = chemicalCompoundService.find(parts[1]);
+        log.info("User requested chemical compound '{}'", formula);
+
+        var compound = chemicalCompoundService.find(formula);
 
         if (compound.isEmpty()) {
             telegramMessageService.send(
                     chatId,
-                    "Compound not found in the database."
+                    "Compound not found in the database: " + formula
             );
             return;
         }
@@ -68,10 +78,5 @@ public class ChemicalCompoundCommand implements Command {
         );
 
         telegramMessageService.send(chatId, response, "Markdown");
-    }
-
-    @Override
-    public String getCommand() {
-        return CommandName.CHEM_COMPOUND.getCommandName();
     }
 }
