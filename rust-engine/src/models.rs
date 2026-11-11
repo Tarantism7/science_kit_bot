@@ -27,20 +27,3 @@ pub struct MolarMassResponse {
 pub struct ErrorResponse {
     pub error: String,
 }
-
-#[derive(Debug, Deserialize)]
-pub struct MoleCalculatorRequest {
-    pub amount: f64,
-    pub calculation: String,
-    pub formula: Option<String>,
-
-    #[serde(default)]
-    pub atomic_masses: HashMap<String, f64>,
-}
-
-#[derive(Debug, Serialize)]
-pub struct MoleCalculatorResponse {
-    pub result: f64,
-    pub unit: String,
-    pub molar_mass: Option<f64>,
-}
