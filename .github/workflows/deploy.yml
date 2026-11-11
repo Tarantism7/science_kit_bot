@@ -6,9 +6,36 @@ on:
       - main
     paths-ignore:
       - 'README.md'
+      - 'TODO.md'
+      - 'docs/**'
 
 jobs:
+  changes:
+    runs-on: ubuntu-26.04
+    outputs:
+      java: ${{ steps.filter.outputs.java }}
+      rust: ${{ steps.filter.outputs.rust }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Filter changed files
+        uses: dorny/paths-filter@v4
+        id: filter
+        with:
+          filters: |
+            java:
+              - 'src/**'
+              - 'build.gradle.kts'
+              - 'settings.gradle.kts'
+              - 'gradle/**'
+              - 'gradlew'
+            rust:
+              - 'rust-engine/**'
+
   deploy:
+    needs: changes
+    if: ${{ needs.changes.outputs.java == 'true' || needs.changes.outputs.rust == 'true' }}
     runs-on: ubuntu-26.04
 
     steps:
@@ -16,17 +43,32 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Setup Java
+        if: ${{ needs.changes.outputs.java == 'true' }}
         uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '25'
           cache: gradle
 
+      - name: Setup Rust
+        if: ${{ needs.changes.outputs.rust == 'true' }}
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+
       - name: Make Gradle executable
+        if: ${{ needs.changes.outputs.java == 'true' }}
         run: chmod +x ./gradlew
 
-      - name: Build JAR
+      - name: Build Java JAR
+        if: ${{ needs.changes.outputs.java == 'true' }}
         run: ./gradlew clean build -x test
+
+      - name: Build Rust Microservice
+        if: ${{ needs.changes.outputs.rust == 'true' }}
+        run: |
+          cd rust-engine
+          cargo build --release
 
       - name: Setup SSH
         run: |
@@ -35,17 +77,42 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H "${{ secrets.SERVER_HOST }}" >> ~/.ssh/known_hosts
 
-      - name: Upload JAR
+      - name: Upload Java JAR
+        if: ${{ needs.changes.outputs.java == 'true' }}
         run: |
           scp build/libs/sciencekitbot.jar \
-            "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/opt/sciencekit/sciencekitbot.jar"
+            "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/tmp/sciencekitbot.jar"
 
-      - name: Restart service
+      - name: Upload Rust Binary
+        if: ${{ needs.changes.outputs.rust == 'true' }}
+        run: |
+          chmod +x rust-engine/target/release/science_kit_rust
+          scp rust-engine/target/release/science_kit_rust \
+            "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/tmp/science_kit_rust"
+
+      - name: Install Uploaded Files
+        run: |
+          ssh "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}" '
+            sudo mkdir -p /opt/sciencekit
+
+            if [ "${{ needs.changes.outputs.java }}" = "true" ]; then
+              sudo mv /tmp/sciencekitbot.jar /opt/sciencekit/sciencekitbot.jar
+            fi
+
+            if [ "${{ needs.changes.outputs.rust }}" = "true" ]; then
+              sudo mv /tmp/science_kit_rust /opt/sciencekit/science_kit_rust
+              sudo chmod +x /opt/sciencekit/science_kit_rust
+            fi
+          '
+
+      - name: Restart Services Conditionally
         run: |
           ssh "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}" \
-            "sudo systemctl restart sciencekit"
+            "if [ '${{ needs.changes.outputs.java }}' = 'true' ]; then sudo systemctl restart sciencekit; fi && \
+             if [ '${{ needs.changes.outputs.rust }}' = 'true' ]; then sudo systemctl restart sciencekit-rust; fi"
 
-      - name: Check service
+      - name: Check Services
         run: |
           ssh "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}" \
-            "sudo systemctl is-active sciencekit"
+            "if [ '${{ needs.changes.outputs.java }}' = 'true' ]; then sudo systemctl is-active sciencekit; fi && \
+             if [ '${{ needs.changes.outputs.rust }}' = 'true' ]; then sudo systemctl is-active sciencekit-rust; fi"

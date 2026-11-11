@@ -1,0 +1,4 @@
+Axum - HTTP server and REST endpoints
+Tokio - Asynchronous runtime
+Serde JSON - serialization/deserialization
+Serde JSON - JSON support
